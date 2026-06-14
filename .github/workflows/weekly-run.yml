@@ -1,0 +1,36 @@
+name: Weekly competitor run
+
+on:
+  schedule:
+    # 06:00 UTC every Monday
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  run-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wake up backend (Render free tier spins down when idle)
+        run: |
+          for i in $(seq 1 10); do
+            if curl -fsS "${{ secrets.BACKEND_URL }}/health"; then
+              echo "Backend is awake"
+              exit 0
+            fi
+            echo "Backend not ready yet, waiting 15s (attempt $i/10)..."
+            sleep 15
+          done
+          echo "Backend did not respond in time" >&2
+          exit 1
+
+      - name: Trigger run-all
+        run: |
+          curl -fsS -X POST "${{ secrets.BACKEND_URL }}/internal/run-all" \
+            -H "X-Internal-Secret: ${{ secrets.INTERNAL_SECRET }}" \
+            --max-time 300
+
+      - name: Send digest emails
+        run: |
+          curl -fsS -X POST "${{ secrets.BACKEND_URL }}/internal/send-digest" \
+            -H "X-Internal-Secret: ${{ secrets.INTERNAL_SECRET }}" \
+            --max-time 120
