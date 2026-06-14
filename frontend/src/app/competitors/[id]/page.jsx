@@ -58,7 +58,7 @@ export default async function CompetitorDetailPage({ params }) {
         <h2 className="mt-8 text-lg font-medium">Briefs</h2>
         {briefs.length === 0 ? (
           <p className="mt-2 text-sm text-slate-400">
-            No briefs yet. Click "Run now" to generate the first one.
+            No briefs yet. Click &quot;Run now&quot; to generate the first one.
           </p>
         ) : (
           <ul className="mt-4 space-y-4">

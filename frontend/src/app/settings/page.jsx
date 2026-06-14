@@ -12,7 +12,7 @@ export default async function SettingsPage() {
           <h1 className="text-xl font-semibold">Settings</h1>
           <p className="text-sm text-slate-400">
             Bring your own API keys (BYOK). Keys are encrypted at rest and
-            used instead of the app's shared keys when set.
+            used instead of the app&apos;s shared keys when set.
           </p>
         </div>
 

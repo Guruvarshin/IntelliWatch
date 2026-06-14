@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.AUTH_SECRET);
 
-export default {
+const authConfig = {
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -37,3 +37,5 @@ export default {
     },
   },
 };
+
+export default authConfig;
