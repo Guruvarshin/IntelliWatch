@@ -18,6 +18,7 @@ class GraphState(TypedDict):
 
     user_id: str
     competitor_id: str
+    competitor_name: str
     since_days: int
 
     github_repo: str | None

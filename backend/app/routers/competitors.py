@@ -8,6 +8,7 @@ from app.api_keys import get_user_api_keys
 from app.auth import get_current_user
 from app.db import db
 from app.graph.graph import build_graph
+from app.graph.state import GraphState
 from app.models import CompetitorIn, CompetitorUpdate
 
 router = APIRouter(prefix="/competitors", tags=["competitors"])
@@ -96,25 +97,25 @@ async def run_competitor(
     api_keys = await get_user_api_keys(db, current_user["user_id"])
 
     graph = build_graph(db)
-    result = await graph.ainvoke(
-        {
-            "user_id": current_user["user_id"],
-            "competitor_id": str(competitor["_id"]),
-            "since_days": competitor.get("since_days", 7),
-            "github_repo": competitor.get("github_repo"),
-            "hn_query": competitor.get("hn_query"),
-            "youtube_channel_id": competitor.get("youtube_channel_id"),
-            "jobs_board_type": competitor.get("jobs_board_type"),
-            "jobs_board_token": competitor.get("jobs_board_token"),
-            "pricing_url": competitor.get("pricing_url"),
-            "pricing_previous_hash": competitor.get("pricing_previous_hash"),
-            "news_query": competitor.get("news_query"),
-            "blog_rss_url": competitor.get("blog_rss_url"),
-            "openai_api_key": api_keys["openai_api_key"],
-            "anthropic_api_key": api_keys["anthropic_api_key"],
-            "raw_signals": [],
-        }
-    )
+    initial_state: GraphState = {
+        "user_id": current_user["user_id"],
+        "competitor_id": str(competitor["_id"]),
+        "competitor_name": competitor.get("name", ""),
+        "since_days": competitor.get("since_days", 7),
+        "github_repo": competitor.get("github_repo"),
+        "hn_query": competitor.get("hn_query"),
+        "youtube_channel_id": competitor.get("youtube_channel_id"),
+        "jobs_board_type": competitor.get("jobs_board_type"),
+        "jobs_board_token": competitor.get("jobs_board_token"),
+        "pricing_url": competitor.get("pricing_url"),
+        "pricing_previous_hash": competitor.get("pricing_previous_hash"),
+        "news_query": competitor.get("news_query"),
+        "blog_rss_url": competitor.get("blog_rss_url"),
+        "openai_api_key": api_keys["openai_api_key"],
+        "anthropic_api_key": api_keys["anthropic_api_key"],
+        "raw_signals": [],
+    }
+    result = await graph.ainvoke(initial_state)
 
     return {
         "raw_signal_count": len(result["raw_signals"]),

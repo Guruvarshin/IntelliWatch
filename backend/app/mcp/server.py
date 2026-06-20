@@ -39,14 +39,25 @@ async def hn_signals(query: str, since_days: int = 7) -> list[dict]:
 
 
 @mcp.tool()
-async def jobs_signals(board_type: str, board_token: str, since_days: int = 7) -> list[dict]:
-    """Get recent job postings from a Greenhouse or Lever board.
+async def jobs_signals(
+    company_name: str,
+    since_days: int = 7,
+    board_type: str | None = None,
+    board_token: str | None = None,
+) -> list[dict]:
+    """Get recent job postings for a company via SerpApi (Google Jobs).
 
-    board_type must be "greenhouse" or "lever". Returns [] if the board
-    doesn't exist (optional per competitor).
+    Runs automatically for every competitor using the company name.
+    Optionally also pulls from a Greenhouse or Lever board if board_type
+    and board_token are provided. Results are deduplicated by URL.
     """
     signals = await fetch_jobs_signals(
-        JobsMCPInput(board_type=board_type, board_token=board_token, since_days=since_days)
+        JobsMCPInput(
+            company_name=company_name,
+            since_days=since_days,
+            board_type=board_type,
+            board_token=board_token,
+        )
     )
     return [s.model_dump(mode="json") for s in signals]
 

@@ -54,16 +54,14 @@ async def hn_agent(state: GraphState) -> dict:
 
 
 async def jobs_agent(state: GraphState) -> dict:
-    if not state.get("jobs_board_type") or not state.get("jobs_board_token"):
-        return {"raw_signals": []}
-
     async with Client(mcp) as client:
         result = await client.call_tool(
             "jobs_signals",
             {
-                "board_type": state["jobs_board_type"],
-                "board_token": state["jobs_board_token"],
+                "company_name": state["competitor_name"],
                 "since_days": state["since_days"],
+                "board_type": state.get("jobs_board_type"),
+                "board_token": state.get("jobs_board_token"),
             },
         )
 

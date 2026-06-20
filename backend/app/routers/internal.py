@@ -37,6 +37,7 @@ async def run_all():
                 {
                     "user_id": competitor["user_id"],
                     "competitor_id": competitor_id,
+                    "competitor_name": competitor.get("name", ""),
                     "since_days": competitor.get("since_days", 7),
                     "github_repo": competitor.get("github_repo"),
                     "hn_query": competitor.get("hn_query"),
