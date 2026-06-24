@@ -102,7 +102,7 @@ def _now() -> datetime:
 async def fetch_github_signals(input: GithubMCPInput) -> list[Signal]:
     since = _now() - timedelta(days=input.since_days)
 
-    async with httpx.AsyncClient(headers=_headers(), timeout=10.0) as client:
+    async with httpx.AsyncClient(headers=_headers(), timeout=10.0, follow_redirects=True) as client:
         releases = await _fetch_releases(client, input.repo, since)
         commits = await _fetch_commits(client, input.repo, since)
 
