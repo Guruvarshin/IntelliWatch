@@ -36,7 +36,7 @@ app owner's.
 | Frontend | Next.js 14 (App Router) + Tailwind CSS |
 | Database | MongoDB Atlas |
 | Auth | Auth.js (NextAuth) + MongoDB adapter, JWT sessions |
-| Email | Resend |
+| Email | Brevo |
 | Containerization | Docker + docker-compose (local dev) |
 | Deploy | Render (backend) + Vercel (frontend) |
 | Scheduling | GitHub Actions cron -> `/internal/run-all` and `/internal/send-digest` |

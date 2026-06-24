@@ -43,7 +43,7 @@
                   POST /internal/send-digest  (X-Internal-Secret)
                                     |
                        per user: aggregate latest brief per
-                       competitor -> one digest email (Resend)
+                       competitor -> one digest email (Brevo)
 ```
 
 The same graph runs synchronously when a user clicks "Run now" on a
