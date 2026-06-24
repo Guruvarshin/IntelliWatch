@@ -1,9 +1,9 @@
-"""Phase 8.5: digest email formatting and sending via Resend.
+"""Phase 8.5: digest email formatting and sending via Brevo.
 
 Sends both an HTML version (styled, for normal email clients) and a
 plain-text version (fallback for clients that don't render HTML, and for
-spam filters that prefer multipart emails). Resend, like virtually every
-provider, accepts both in one call and lets the client choose.
+spam filters that prefer multipart emails). Brevo accepts both in one call
+and lets the client choose.
 """
 
 import html as html_module
@@ -12,7 +12,7 @@ import os
 import httpx
 import markdown as md
 
-RESEND_API_URL = "https://api.resend.com/emails"
+BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
 
 # Inline-friendly CSS: a <style> block in <head> is supported by Gmail,
 # Apple Mail, Outlook web/desktop, and most modern clients. Keeping styles
@@ -110,16 +110,22 @@ def format_digest_email(briefs: list[dict]) -> tuple[str, str, str]:
 
 
 async def send_email(to: str, subject: str, html_body: str, text_body: str) -> None:
+    sender_email = os.environ["BREVO_FROM_EMAIL"]
+    sender_name = os.environ.get("BREVO_FROM_NAME", "IntelliWatch")
+
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            RESEND_API_URL,
-            headers={"Authorization": f"Bearer {os.environ['RESEND_API_KEY']}"},
+            BREVO_API_URL,
+            headers={
+                "api-key": os.environ["BREVO_API_KEY"],
+                "Content-Type": "application/json",
+            },
             json={
-                "from": os.environ["RESEND_FROM_EMAIL"],
-                "to": [to],
+                "sender": {"name": sender_name, "email": sender_email},
+                "to": [{"email": to}],
                 "subject": subject,
-                "html": html_body,
-                "text": text_body,
+                "htmlContent": html_body,
+                "textContent": text_body,
             },
         )
         resp.raise_for_status()
